@@ -1,0 +1,27 @@
+server:
+  port: 8080
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: playlist-generator
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
+            scope:
+              - openid
+              - profile
+              - https://www.googleapis.com/auth/youtube
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&prompt=consent
+
+app:
+  cors:
+    allowed-origin: ${FRONTEND_URL:http://localhost:5173}
+  youtube:
+    api-key: ${YOUTUBE_API_KEY:}
