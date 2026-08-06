@@ -1,0 +1,9 @@
+# Activated when frontend and backend are deployed to different origins (e.g. Vercel + Render).
+# The session cookie needs SameSite=None + Secure to survive the cross-site OAuth2 login flow;
+# same-origin setups (docker-compose behind the nginx proxy) don't need this profile at all.
+server:
+  servlet:
+    session:
+      cookie:
+        same-site: none
+        secure: true
