@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -35,13 +36,13 @@ public class YouTubeService {
     private static final String APPLICATION_NAME = "playlist-generator";
 
     private final String apiKey;
-    private final OAuth2AuthorizedClientService authorizedClientService;
+    private final ObjectProvider<OAuth2AuthorizedClientService> authorizedClientService;
     private final HttpTransport transport;
     private final GsonFactory jsonFactory;
 
     public YouTubeService(
         @Value("${app.youtube.api-key}") String apiKey,
-        OAuth2AuthorizedClientService authorizedClientService
+        ObjectProvider<OAuth2AuthorizedClientService> authorizedClientService
     ) throws GeneralSecurityException, IOException {
         this.apiKey = apiKey;
         this.authorizedClientService = authorizedClientService;
@@ -119,7 +120,7 @@ public class YouTubeService {
     }
 
     private YouTube authenticatedClient(OAuth2AuthenticationToken authentication) {
-        OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(
+        OAuth2AuthorizedClient client = authorizedClientService.getObject().loadAuthorizedClient(
             authentication.getAuthorizedClientRegistrationId(),
             authentication.getName()
         );

@@ -20,7 +20,7 @@ export type GenerateRequest = {
 }
 export type SaveRequest = { title: string; videoIds: string[] }
 export type SaveResultDto = { playlistId: string; youtubeMusicUrl: string }
-export type AuthStatus = { authenticated: boolean; loginUrl: string }
+export type AuthStatus = { authenticated: boolean; oauthEnabled: boolean; loginUrl: string }
 
 export const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'
 

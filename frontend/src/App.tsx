@@ -77,8 +77,9 @@ function App() {
 
   async function save() {
     if (!playlist) return
-    if (!authStatus?.authenticated) {
-      window.location.href = api.loginUrl(authStatus?.loginUrl ?? '/oauth2/authorization/google')
+    if (!authStatus?.oauthEnabled) return
+    if (!authStatus.authenticated) {
+      window.location.href = api.loginUrl(authStatus.loginUrl)
       return
     }
     setSaving(true)
@@ -101,7 +102,7 @@ function App() {
           <Music2 size={16} className="text-accent" />
           playlist.generator
         </div>
-        <AuthPill authenticated={authStatus?.authenticated} />
+        {authStatus?.oauthEnabled && <AuthPill authenticated={authStatus.authenticated} />}
       </header>
 
       <main className="mx-auto flex max-w-6xl flex-col items-center gap-14 px-6 pb-24 pt-8">
@@ -204,6 +205,7 @@ function App() {
                 <SaveButton
                   saving={saving}
                   saveResult={saveResult}
+                  oauthEnabled={authStatus?.oauthEnabled}
                   authenticated={authStatus?.authenticated}
                   onSave={save}
                 />
@@ -233,14 +235,26 @@ function AuthPill({ authenticated }: { authenticated?: boolean }) {
 function SaveButton({
   saving,
   saveResult,
+  oauthEnabled,
   authenticated,
   onSave,
 }: {
   saving: boolean
   saveResult: { youtubeMusicUrl: string } | null
+  oauthEnabled?: boolean
   authenticated?: boolean
   onSave: () => void
 }) {
+  if (!oauthEnabled) {
+    return (
+      <span
+        title="Login com Google não configurado no backend (GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET)"
+        className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-sm text-muted opacity-60"
+      >
+        <LogIn size={16} /> Salvar no YT Music indisponível
+      </span>
+    )
+  }
   if (saveResult) {
     return (
       <a

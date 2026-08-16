@@ -4,10 +4,12 @@ This is a project made for an academic project, that consists of a generator of 
 ## Rodando localmente
 
 ```bash
-cp .env.example .env   # preencha YOUTUBE_API_KEY, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
-docker compose up --build
+cp .env.example .env   # preencha ao menos YOUTUBE_API_KEY
+docker compose up --build -d
 ```
-Frontend em `http://localhost:8081`, backend em `http://localhost:8080` (o nginx do frontend já faz proxy de `/api`, `/oauth2` e `/login`).
+Frontend em `http://localhost:8081`, backend em `http://localhost:8080` (o nginx do frontend já faz proxy de `/api`, `/oauth2` e `/login`). O `restart: unless-stopped` do `docker-compose.yml` mantém os containers de pé entre reboots (o Docker já sobe sozinho no boot), então depois do primeiro `up` a aplicação já fica disponível sempre.
+
+Só `YOUTUBE_API_KEY` é obrigatória — sem ela nada busca música. `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` são **opcionais**: sem eles o app sobe normal e só o botão "Salvar no YT Music" fica desativado. Pra criar as credenciais do Google (gratuito, ~5 min): [Google Cloud Console](https://console.cloud.google.com/apis/credentials) → criar credencial OAuth 2.0 tipo "Web application" → adicione `http://localhost:8080/login/oauth2/code/google` como URI de redirecionamento → habilite a "YouTube Data API v3" no projeto.
 
 ## Deploy (Vercel + Render)
 
@@ -32,3 +34,5 @@ Notas:
 - Frontend e backend ficam em domínios diferentes nesse cenário, então o backend roda com o
   profile `prod` (`SPRING_PROFILES_ACTIVE=prod`, já definido no `render.yaml`) pra usar cookie de
   sessão `SameSite=None; Secure`, necessário pro login OAuth2 funcionar entre origens.
+- O login com Google é habilitado automaticamente quando `GOOGLE_CLIENT_ID` está preenchido — não
+  precisa de nenhuma env var ou profile extra pra isso.

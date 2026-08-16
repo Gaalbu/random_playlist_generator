@@ -5,7 +5,10 @@ export function useAuthStatus() {
   const [status, setStatus] = useState<AuthStatus | null>(null)
 
   useEffect(() => {
-    api.authStatus().then(setStatus).catch(() => setStatus({ authenticated: false, loginUrl: '/oauth2/authorization/google' }))
+    api
+      .authStatus()
+      .then(setStatus)
+      .catch(() => setStatus({ authenticated: false, oauthEnabled: false, loginUrl: '/oauth2/authorization/google' }))
   }, [])
 
   return status
